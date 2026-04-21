@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Student Result System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>📊 Class Dashboard</h1>
+  <p>All student results ranked by performance</p>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-num">{{ stats.total }}</div>
+    <div class="stat-label">Total Students</div>
+  </div>
+  <div class="stat-card gold">
+    <div class="stat-num">{{ stats.average }}%</div>
+    <div class="stat-label">Class Average</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">{{ stats.highest }}%</div>
+    <div class="stat-label">Highest Score</div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-num">{{ stats.pass_count }}</div>
+    <div class="stat-label">Passed</div>
+  </div>
+  <div class="stat-card red">
+    <div class="stat-num">{{ stats.fail_count }}</div>
+    <div class="stat-label">Failed</div>
+  </div>
+</div>
+
+<!-- Search + Add button -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+  <form class="search-bar" action="/search" method="get" style="margin:0; flex:1; max-width:350px;">
+    <input type="text" name="roll" placeholder="Search by roll number..." />
+    <button type="submit" class="btn btn-primary" style="white-space:nowrap;">Search</button>
+  </form>
+  <a href="/add" class="btn btn-primary">+ Add Student</a>
+</div>
+
+<!-- Students table -->
+<div class="card" style="padding:0; overflow:hidden;">
+  {% if students %}
+  <table>
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Name</th>
+        <th>Roll No.</th>
+        <th>Maths</th>
+        <th>Science</th>
+        <th>English</th>
+        <th>Percentage</th>
+        <th>Grade</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for student in students %}
+      <tr>
+        <td class="rank">#{{ loop.index }}</td>
+        <td><strong>{{ student.name }}</strong></td>
+        <td style="color:#718096;">{{ student.roll_number }}</td>
+        <td>{{ student.maths }}</td>
+        <td>{{ student.science }}</td>
+        <td>{{ student.english }}</td>
+        <td><strong>{{ student.percentage }}%</strong></td>
+        <td>
+          <span class="grade-badge grade-{{ student.grade }}">{{ student.grade }}</span>
+        </td>
+        <td style="display:flex; gap:6px;">
+          <a href="/student/{{ student.id }}" class="btn btn-info">View</a>
+          <form action="/delete/{{ student.id }}" method="post"
+                onsubmit="return confirm('Delete {{ student.name }}?')">
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <div style="font-size:3rem;">🎓</div>
+    <p>No students added yet.</p>
+    <a href="/add" class="btn btn-primary" style="margin-top:1rem;">Add First Student</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

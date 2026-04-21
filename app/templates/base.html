@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Student Result Management System{% endblock %}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f4f8;
+      color: #2d3748;
+      min-height: 100vh;
+    }
+
+    /* ── Navbar ── */
+    nav {
+      background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    nav .brand {
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+    }
+    nav .nav-links a {
+      color: #bee3f8;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-size: 0.9rem;
+      transition: color .2s;
+    }
+    nav .nav-links a:hover { color: #fff; }
+
+    /* ── Layout ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ── Page header ── */
+    .page-header {
+      margin-bottom: 1.5rem;
+    }
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1a365d;
+    }
+    .page-header p { color: #718096; margin-top: 4px; font-size: 0.95rem; }
+
+    /* ── Cards ── */
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Stats grid ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      border-top: 4px solid #3182ce;
+    }
+    .stat-card.green { border-top-color: #38a169; }
+    .stat-card.red   { border-top-color: #e53e3e; }
+    .stat-card.gold  { border-top-color: #d69e2e; }
+    .stat-card .stat-num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a365d;
+    }
+    .stat-card .stat-label {
+      font-size: 0.8rem;
+      color: #718096;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Table ── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    thead th {
+      background: #ebf4ff;
+      color: #2b6cb0;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    tbody tr { border-bottom: 1px solid #e2e8f0; transition: background .15s; }
+    tbody tr:hover { background: #f7fafc; }
+    tbody td { padding: 12px 14px; }
+
+    /* ── Grade badges ── */
+    .grade-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .grade-A\+ { background:#c6f6d5; color:#22543d; }
+    .grade-A  { background:#bee3f8; color:#1a365d; }
+    .grade-B  { background:#e9d8fd; color:#44337a; }
+    .grade-C  { background:#fefcbf; color:#744210; }
+    .grade-D  { background:#feebc8; color:#7b341e; }
+    .grade-F  { background:#fed7d7; color:#742a2a; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-block;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: opacity .2s, transform .1s;
+    }
+    .btn:hover { opacity: 0.88; }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: #3182ce; color: #fff; }
+    .btn-danger  { background: #e53e3e; color: #fff; font-size: 0.8rem; padding: 6px 12px; }
+    .btn-info    { background: #4299e1; color: #fff; font-size: 0.8rem; padding: 6px 12px; }
+    .btn-secondary { background: #e2e8f0; color: #4a5568; }
+
+    /* ── Form ── */
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #cbd5e0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: border-color .2s;
+      color: #2d3748;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: #3182ce;
+      box-shadow: 0 0 0 3px rgba(49,130,206,0.15);
+    }
+    .marks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .form-hint { font-size: 0.78rem; color: #a0aec0; margin-top: 4px; }
+
+    /* ── Alerts ── */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .alert-success { background: #c6f6d5; color: #22543d; border-left: 4px solid #38a169; }
+    .alert-error   { background: #fed7d7; color: #742a2a; border-left: 4px solid #e53e3e; }
+
+    /* ── Search bar ── */
+    .search-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.2rem;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 9px 14px;
+      border: 1.5px solid #cbd5e0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .search-bar input:focus {
+      outline: none;
+      border-color: #3182ce;
+    }
+
+    /* ── Result card ── */
+    .result-card {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .result-card .card-header {
+      background: linear-gradient(135deg, #1a365d, #2b6cb0);
+      color: #fff;
+      padding: 2rem;
+      text-align: center;
+    }
+    .result-card .card-header h2 { font-size: 1.5rem; }
+    .result-card .card-header p { color: #bee3f8; margin-top: 4px; }
+    .result-card .card-body { background: #fff; padding: 1.5rem; }
+    .subject-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 0.95rem;
+    }
+    .subject-row:last-child { border-bottom: none; }
+    .big-grade {
+      font-size: 5rem;
+      font-weight: 900;
+      text-align: center;
+      padding: 1rem 0;
+      line-height: 1;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #a0aec0;
+    }
+    .empty-state p { margin-top: 8px; }
+
+    /* ── Rank column ── */
+    .rank { font-weight: 700; color: #3182ce; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/">🎓 Student Result System</a>
+  <div class="nav-links">
+    <a href="/">Dashboard</a>
+    <a href="/add">Add Student</a>
+    <a href="/search">Search</a>
+  </div>
+</nav>
+
+<div class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

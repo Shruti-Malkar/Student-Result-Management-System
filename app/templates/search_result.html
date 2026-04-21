@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Search Result — Student Result System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>🔍 Search Result</h1>
+  <p>Results for roll number: <strong>{{ roll }}</strong></p>
+</div>
+
+{% if student %}
+  <div style="max-width:500px;">
+    <div class="card">
+      <p style="margin-bottom:1rem;color:#718096;font-size:0.9rem;">Student found ✅</p>
+      <table>
+        <tr><td style="padding:8px 0;color:#718096;">Name</td><td><strong>{{ student.name }}</strong></td></tr>
+        <tr><td style="padding:8px 0;color:#718096;">Roll No.</td><td>{{ student.roll_number }}</td></tr>
+        <tr><td style="padding:8px 0;color:#718096;">Maths</td><td>{{ student.maths }}/100</td></tr>
+        <tr><td style="padding:8px 0;color:#718096;">Science</td><td>{{ student.science }}/100</td></tr>
+        <tr><td style="padding:8px 0;color:#718096;">English</td><td>{{ student.english }}/100</td></tr>
+        <tr><td style="padding:8px 0;color:#718096;">Percentage</td><td><strong>{{ student.percentage }}%</strong></td></tr>
+        <tr><td style="padding:8px 0;color:#718096;">Grade</td>
+          <td><span class="grade-badge grade-{{ student.grade }}">{{ student.grade }}</span></td></tr>
+      </table>
+      <div style="margin-top:1rem; display:flex; gap:8px;">
+        <a href="/student/{{ student.id }}" class="btn btn-primary">View Full Card</a>
+        <a href="/" class="btn btn-secondary">Dashboard</a>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <div class="card" style="max-width:400px; text-align:center;">
+    <div style="font-size:3rem;">😕</div>
+    <p style="margin-top:8px;">No student found with roll number <strong>{{ roll }}</strong></p>
+    <a href="/" class="btn btn-secondary" style="margin-top:1rem;">Go Back</a>
+  </div>
+{% endif %}
+
+{% endblock %}

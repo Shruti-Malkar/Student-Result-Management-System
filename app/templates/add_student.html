@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Add Student — Student Result System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>➕ Add New Student</h1>
+  <p>Enter student details and subject marks below</p>
+</div>
+
+<div class="card" style="max-width: 600px;">
+  <form action="/add" method="post">
+
+    <div class="form-group">
+      <label for="name">Student Name</label>
+      <input type="text" id="name" name="name" class="form-control"
+             placeholder="e.g. Rahul Sharma" required />
+    </div>
+
+    <div class="form-group">
+      <label for="roll_number">Roll Number</label>
+      <input type="text" id="roll_number" name="roll_number" class="form-control"
+             placeholder="e.g. CS2024001" required />
+      <div class="form-hint">Must be unique for each student</div>
+    </div>
+
+    <div class="form-group">
+      <label>Subject Marks <span style="color:#a0aec0;">(out of 100)</span></label>
+      <div class="marks-grid">
+        <div>
+          <label for="maths" style="font-size:0.8rem; color:#718096;">Mathematics</label>
+          <input type="number" id="maths" name="maths" class="form-control"
+                 min="0" max="100" placeholder="0–100" required />
+        </div>
+        <div>
+          <label for="science" style="font-size:0.8rem; color:#718096;">Science</label>
+          <input type="number" id="science" name="science" class="form-control"
+                 min="0" max="100" placeholder="0–100" required />
+        </div>
+        <div>
+          <label for="english" style="font-size:0.8rem; color:#718096;">English</label>
+          <input type="number" id="english" name="english" class="form-control"
+                 min="0" max="100" placeholder="0–100" required />
+        </div>
+      </div>
+    </div>
+
+    <!-- Live grade preview -->
+    <div id="preview" class="card"
+         style="background:#f7fafc; border:1.5px dashed #bee3f8; display:none; margin-bottom:1rem; padding:1rem;">
+      <strong>Preview:</strong>
+      Percentage: <span id="prev-pct">—</span> &nbsp;|&nbsp;
+      Grade: <span id="prev-grade" class="grade-badge">—</span>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button type="submit" class="btn btn-primary">Save Student</button>
+      <a href="/" class="btn btn-secondary">Cancel</a>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  const gradeColor = {
+    'A+':'#c6f6d5','A':'#bee3f8','B':'#e9d8fd',
+    'C':'#fefcbf','D':'#feebc8','F':'#fed7d7'
+  };
+  const gradeText = {
+    'A+':'#22543d','A':'#1a365d','B':'#44337a',
+    'C':'#744210','D':'#7b341e','F':'#742a2a'
+  };
+
+  function calcGrade(pct) {
+    if (pct >= 90) return 'A+';
+    if (pct >= 80) return 'A';
+    if (pct >= 70) return 'B';
+    if (pct >= 60) return 'C';
+    if (pct >= 50) return 'D';
+    return 'F';
+  }
+
+  function updatePreview() {
+    const m = parseFloat(document.getElementById('maths').value);
+    const s = parseFloat(document.getElementById('science').value);
+    const e = parseFloat(document.getElementById('english').value);
+    if (!isNaN(m) && !isNaN(s) && !isNaN(e)) {
+      const pct = ((m + s + e) / 3).toFixed(2);
+      const grade = calcGrade(pct);
+      document.getElementById('prev-pct').textContent = pct + '%';
+      const gb = document.getElementById('prev-grade');
+      gb.textContent = grade;
+      gb.style.background = gradeColor[grade];
+      gb.style.color = gradeText[grade];
+      document.getElementById('preview').style.display = 'block';
+    }
+  }
+
+  ['maths','science','english'].forEach(id =>
+    document.getElementById(id).addEventListener('input', updatePreview)
+  );
+</script>
+{% endblock %}
