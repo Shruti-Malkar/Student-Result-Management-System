@@ -198,5 +198,4 @@ Deployed on [Render](https://render.com) via automatic deployment triggered by G
 |--------|-------------|
 | `SONAR_TOKEN` | From sonarcloud.io |
 | `RENDER_DEPLOY_HOOK` | From Render dashboard |
-
 Auto trigger test
